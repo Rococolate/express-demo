@@ -1,7 +1,5 @@
-doctype html
-html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    h1 #{title} hello
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
