@@ -1,20 +1,36 @@
 extends layout
 
 block content
-  input#date(type='date')
-  br
-  button#btn.btn.btn-default 选择
-  h3#tips
-  h1#h1
-  h2#h2
-  img#img
-  p#p
+  .container
+    h1 choose Date
+    .form-inline
+      .form-group
+        input.form-control(type="text",name="time",value="")
+        button#btn.btn.btn-default 选择
+    h3#tips
+    h1#h1
+    h2#h2
+    img#img
+    p#p
   script.
     'use strict'
+    $(document).ready(function(){
+      $('input[name="time"]').daterangepicker({
+             singleDatePicker: true,
+             showDropdowns: true,
+             locale:{
+              
+             }
+         }, 
+         function(start, end, label) {
+            $('input[name="time"]').val(start.format('YYYY-MM-DD'))
+         });
+    })
+    
     $('#btn').click(function () {
       
-      if($('#date').val() != ''){
-        ajaxApod($('#date').val())
+      if($('#datetimepicker').val() != ''){
+        ajaxApod($('#datetimepicker').val())
       }
       
     })

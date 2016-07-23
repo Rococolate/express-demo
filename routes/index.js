@@ -10,7 +10,8 @@ let ApodModel = require('../models/apodModel')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  let today = dateFormat(new Date())
+  res.render('index', { title: 'Apod' , today : today });
 });
 
 /* GET home page. */
@@ -21,7 +22,7 @@ router.get('/apod', function(req, res, next) {
   let url = `https://api.nasa.gov/planetary/apod?hd=true&api_key=1kD6jUfLLv5X8BYHfExJ5e6trif3mCT7pOVnUX4e${reqDate != '' ? '&date=' + reqDate : '' }`
   console.log(url)
 
-  let findDate = reqDate == "" ? dateFormat(Date.now()) : reqDate
+  let findDate = reqDate == "" ? dateFormat(new Date()) : reqDate
   console.log('findDate:',findDate)
   ApodModel.findByDate(findDate,function (err,apod) {
     if(err){
