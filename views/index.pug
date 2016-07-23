@@ -1,5 +1,51 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  input#date(type='date')
+  br
+  button#btn.btn.btn-default 选择
+  h3#tips
+  h1#h1
+  h2#h2
+  img#img
+  p#p
+  script.
+    'use strict'
+    $('#btn').click(function () {
+      
+      if($('#date').val() != ''){
+        ajaxApod($('#date').val())
+      }
+      
+    })
+    function ajaxApod (date) {
+      $('#tips').text('loading...')
+      $.ajax({
+        type:'get',
+        url:'/apod',
+        data:{
+          date:date
+        },
+        success:function (res) {
+          console.log(res)
+          if(res.code && res.code == '0000'){
+            $('#tips').text('')
+            var data = res.data
+            console.log(data)
+            $('#h1').text(data.title)
+            $('#h2').text(data.date)
+            $('#p').text(data.explanation)
+            $('#img').attr('src',data.url)
+          }else{
+            $('#tips').text(res.code+'_'+res.msg)
+          }
+        },
+        error:function  (res) {
+          $('#tips').text(res)
+          console.log(res)
+        }
+      })
+    }
+    
+
+   

@@ -1,9 +1,109 @@
+'use strict'
+
 var express = require('express');
 var router = express.Router();
+
+const request = require('request');
+let dateFormat = require('../lib/dateFormat')
+let ApodModel = require('../models/apodModel')
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
+
+/* GET home page. */
+router.get('/apod', function(req, res, next) {
+  console.log(req.query)
+  let reqDate = ''
+  if(req.query.date) reqDate = req.query.date
+  let url = `https://api.nasa.gov/planetary/apod?hd=true&api_key=1kD6jUfLLv5X8BYHfExJ5e6trif3mCT7pOVnUX4e${reqDate != '' ? '&date=' + reqDate : '' }`
+  console.log(url)
+
+  let findDate = reqDate == "" ? dateFormat(Date.now()) : reqDate
+  console.log('findDate:',findDate)
+  ApodModel.findByDate(findDate,function (err,apod) {
+    if(err){
+      console.log(err)
+    }
+    console.log('apod=====>',apod)
+    if(apod != null){
+      res.json({
+            code: '0000',
+            msg: 'success',
+            data: apod
+        })
+    }else{
+      try{
+        request(url,(error,response,body)=>{
+          console.log('error:',error,'body',body)
+          console.log('================')
+          console.log(response.headers)
+          console.log('================')
+          console.log('response.statusCode',response.statusCode)
+          console.log('================')
+
+          if(!error && response.statusCode == 200 ){
+
+            let data = JSON.parse(body)
+            
+              saveApodToDB(findDate,data)
+              res.json({
+                code:'0000',
+                msg:'success',
+                data:data
+              })
+          }else{
+            let data = JSON.parse(body)
+            res.json({
+                code:data.code,
+                msg:data.msg,
+                data:{}
+              })
+          }
+        })
+      }catch(e){
+        console.log(e)
+      }
+    }
+
+  })
+
+  
+  
+});
+
+function saveApodToDB (date,data) {
+  let _apod = {}
+
+  ApodModel.findByDate(date,function (err,apod) {
+    if(err){
+      console.log(err)
+    }
+    if(apod != null){
+      return false
+    }else{
+      _apod = new ApodModel({
+        date:data.date,
+        explanation:data.explanation,
+        hdurl:data.hdurl,
+        media_type:data.media_type,
+        title:data.title,
+        url:data.url
+      })
+
+      _apod.save(function (err,apod) {
+        if(err){
+          console.log(err)
+        }
+        console.log('apod=====>',apod)
+      })
+    }
+  })
+  
+
+}
+
 
 module.exports = router;
