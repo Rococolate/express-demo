@@ -19,7 +19,8 @@ block content
              singleDatePicker: true,
              showDropdowns: true,
              locale:{
-              
+              format: 'YYYY-MM-DD'
+
              }
          }, 
          function(start, end, label) {
@@ -29,8 +30,8 @@ block content
     
     $('#btn').click(function () {
       
-      if($('#datetimepicker').val() != ''){
-        ajaxApod($('#datetimepicker').val())
+      if($('input[name="time"]').val() != ''){
+        ajaxApod($('input[name="time"]').val())
       }
       
     })
