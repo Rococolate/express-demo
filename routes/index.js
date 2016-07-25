@@ -6,6 +6,7 @@ var router = express.Router();
 const request = require('request');
 let dateFormat = require('../lib/dateFormat')
 let ApodModel = require('../models/apodModel')
+let saveApodToDB = require('../lib/saveApodToDB')
 
 
 /* GET home page. */
@@ -42,6 +43,8 @@ router.get('/apod', function(req, res, next) {
           console.log('================')
           console.log(response.headers)
           console.log('================')
+          console.log(Number(response.headers['x-ratelimit-remaining']))
+          console.log('================')
           console.log('response.statusCode',response.statusCode)
           console.log('================')
 
@@ -75,36 +78,7 @@ router.get('/apod', function(req, res, next) {
   
 });
 
-function saveApodToDB (date,data) {
-  let _apod = {}
 
-  ApodModel.findByDate(date,function (err,apod) {
-    if(err){
-      console.log(err)
-    }
-    if(apod != null){
-      return false
-    }else{
-      _apod = new ApodModel({
-        date:data.date,
-        explanation:data.explanation,
-        hdurl:data.hdurl,
-        media_type:data.media_type,
-        title:data.title,
-        url:data.url
-      })
-
-      _apod.save(function (err,apod) {
-        if(err){
-          console.log(err)
-        }
-        console.log('apod=====>',apod)
-      })
-    }
-  })
-  
-
-}
 
 
 module.exports = router;
