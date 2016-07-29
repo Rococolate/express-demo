@@ -59,6 +59,9 @@ request(url,(error,response,body)=>{
       };
 
       saveBitinnToDB(item.attribs.href,info,()=>{
+        if(index == array.length - 1){
+          mongoose.disconnect()
+        }
         transporter.sendMail(mailOptions, function(error, info){
             if(error){
                 return console.log(error);
@@ -66,6 +69,10 @@ request(url,(error,response,body)=>{
             console.log('Message sent: ' + info.response);
 
         });
+      },()=>{
+        if(index == array.length - 1){
+          mongoose.disconnect()
+        }
       })
     })
   }
@@ -96,4 +103,3 @@ function filterChapters (html,cb) {
 
 
 
-// send mail with defined transport object
