@@ -10,11 +10,13 @@ block content
     h3#tips
     h1#h1
     h2#h2
-    img#img
-    p#p
+    img.img-responsive#img
+    p.lead#p
   script.
     'use strict'
     $(document).ready(function(){
+    
+    
       $('input[name="time"]').daterangepicker({
              singleDatePicker: true,
              showDropdowns: true,
@@ -26,6 +28,7 @@ block content
          function(start, end, label) {
             $('input[name="time"]').val(start.format('YYYY-MM-DD'))
          });
+    
     })
     
     $('#btn').click(function () {
@@ -52,7 +55,13 @@ block content
             $('#h1').text(data.title)
             $('#h2').text(data.date)
             $('#p').text(data.explanation)
-            $('#img').attr('src',data.url)
+            if(data.media_type == 'image'){
+              $('#tips').text('IMAGE IS LOADING..')
+              $('#img')[0].onload = function(){
+                $('#tips').text('')
+              }
+              $('#img').attr('src',data.url)
+            }
           }else{
             $('#tips').text(res.code+'_'+res.msg)
           }

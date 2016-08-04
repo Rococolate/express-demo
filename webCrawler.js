@@ -99,11 +99,3 @@ function filterChapters (html,cb) {
     cb($)
   }
 }
-
-
-
-
-
-
-
-
