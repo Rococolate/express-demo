@@ -38,6 +38,25 @@ block content
       }
       
     })
+
+    var urlMsg = getURLInformation()
+    if(urlMsg.date){
+      ajaxApod (urlMsg.date)
+    }
+
+    function getURLInformation() {
+      var urlMsg = {};
+      if (window.location.href.split('#')[0].split('?')[1]) {
+          var urlSearch = window.location.href.split('#')[0].split('?')[1].split('&');
+      }
+
+      if (urlSearch) {
+          for (var i = 0; i < urlSearch.length; i++) {
+              urlMsg[urlSearch[i].split('=')[0]] = urlSearch[i].split('=')[1] || "";
+          }
+      }
+      return urlMsg;
+    }
     function ajaxApod (date) {
       $('#tips').text('loading...')
       $.ajax({
