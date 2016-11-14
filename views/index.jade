@@ -30,42 +30,8 @@ block content
          });
     
     })
-    
-    $('#btn').click(function () {
-      
-      if($('input[name="time"]').val() != ''){
-        ajaxApod($('input[name="time"]').val())
-      }
-      
-    })
 
-    var urlMsg = getURLInformation()
-    if(urlMsg.date){
-      ajaxApod (urlMsg.date)
-    }
-
-    function getURLInformation() {
-      var urlMsg = {};
-      if (window.location.href.split('#')[0].split('?')[1]) {
-          var urlSearch = window.location.href.split('#')[0].split('?')[1].split('&');
-      }
-
-      if (urlSearch) {
-          for (var i = 0; i < urlSearch.length; i++) {
-              urlMsg[urlSearch[i].split('=')[0]] = urlSearch[i].split('=')[1] || "";
-          }
-      }
-      return urlMsg;
-    }
-    function ajaxApod (date) {
-      $('#tips').text('loading...')
-      $.ajax({
-        type:'get',
-        url:'/apod',
-        data:{
-          date:date
-        },
-        success:function (res) {
+    function successCallback (res) {
           console.log(res)
           if(res.code && res.code == '0000'){
             $('#tips').text('')
@@ -87,7 +53,75 @@ block content
           }else{
             $('#tips').text(res.code+'_'+res.msg)
           }
-        },
+        }
+    
+    $('#btn').click(function () {
+      
+      if($('input[name="time"]').val() != ''){
+        ajaxApod('/apod?date='+$('input[name="time"]').val(),successCallback)
+      }
+      
+    })
+    
+    var urlMsg = getURLInformation()
+
+    if(urlMsg.date){
+      ajaxApod ('/apod?date='+urlMsg.date,successCallback)
+    }
+
+    function lastsuccessCallback (res) {
+          console.log(res)
+          if(res.code && res.code == '0000'){
+            $('#tips').text('')
+            var data = res.data
+            console.log(data)
+            $('#h1').text(data.title)
+            $('#h2').text(data.date)
+            $('#p').text(data.explanation)
+            if(data.media_type == 'image'){
+              $('#tips').text('IMAGE IS LOADING..')
+              $('#imgContainer').html('')
+              var img = document.createElement('img')
+              $(img).addClass('img-responsive').appendTo('#imgContainer')
+              img.onload = function(){
+                $('#tips').text('')
+              }
+              img.src = data.url
+            }
+          }else if(res.code == '500'){
+          last ++
+            ajaxApod('apod/?last='+last,lastsuccessCallback)
+          }else{
+            $('#tips').text(res.code+'_'+res.msg)
+          }
+        }
+
+    var last = 0
+    console.log(urlMsg.last)
+
+    if(!urlMsg.date && urlMsg.last){
+      ajaxApod('apod/?last='+last,lastsuccessCallback)
+    }
+
+    function getURLInformation() {
+      var urlMsg = {};
+      if (window.location.href.split('#')[0].split('?')[1]) {
+          var urlSearch = window.location.href.split('#')[0].split('?')[1].split('&');
+      }
+
+      if (urlSearch) {
+          for (var i = 0; i < urlSearch.length; i++) {
+              urlMsg[urlSearch[i].split('=')[0]] = urlSearch[i].split('=')[1] || "";
+          }
+      }
+      return urlMsg;
+    }
+    function ajaxApod (url,successCallback) {
+      $('#tips').text('loading...')
+      $.ajax({
+        type:'get',
+        url:url,
+        success:successCallback,
         error:function  (res) {
           $('#tips').text(res)
           console.log(res)
