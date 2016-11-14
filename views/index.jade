@@ -90,6 +90,7 @@ block content
             }
           }else if(res.code == '500'){
           last ++
+          if(last>4) return false
             ajaxApod('apod/?last='+last,lastsuccessCallback)
           }else{
             $('#tips').text(res.code+'_'+res.msg)
