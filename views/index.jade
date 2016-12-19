@@ -9,6 +9,7 @@ block content
         button#btn.btn.btn-default 选择
     h3#tips
     h1#h1
+    p#url
     h2#h2
     h2#imgContainer
     p.lead#p
@@ -37,6 +38,9 @@ block content
             $('#h1').text(data.title)
             $('#h2').text(data.date)
             $('#p').text(data.explanation)
+            console.log(data.date)
+            var url = 'http://apod.nasa.gov/apod/ap'+ data.date.replace(/-/g,'').slice(2) +'.html'
+            $('#url').html('<span>Source:</span> <a target="_blank" href='+url+'>'+url+'</a>')
             if(data.media_type == 'image'){
               $('#tips').text('IMAGE LOADING..')
               $('#imgContainer').html('')
