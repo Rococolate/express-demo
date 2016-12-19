@@ -28,29 +28,33 @@ block content
          });
     })
 
+    function success(res) {
+      $('#tips').text('')
+      var data = res.data
+      //- console.log(data)
+      document.title = data.title
+      $('#h1').text(data.title)
+      $('#h2').text(data.date)
+      $('#p').text(data.explanation)
+      console.log(data.date)
+      var url = 'http://apod.nasa.gov/apod/ap'+ data.date.replace(/-/g,'').slice(2) +'.html'
+      $('#url').html('<span>Source:</span> <a target="_blank" href='+url+'>'+url+'</a>')
+      if(data.media_type == 'image'){
+        $('#tips').text('IMAGE LOADING..')
+        $('#imgContainer').html('')
+        var img = document.createElement('img')
+        $(img).addClass('img-responsive').appendTo('#imgContainer')
+        img.onload = function(){
+          $('#tips').text('')
+        }
+        img.src = data.url
+      }
+    }
+
     function successCallback (res) {
           //- console.log(res)
           if(res.code && res.code == '0000'){
-            $('#tips').text('')
-            var data = res.data
-            //- console.log(data)
-            document.title = data.title
-            $('#h1').text(data.title)
-            $('#h2').text(data.date)
-            $('#p').text(data.explanation)
-            console.log(data.date)
-            var url = 'http://apod.nasa.gov/apod/ap'+ data.date.replace(/-/g,'').slice(2) +'.html'
-            $('#url').html('<span>Source:</span> <a target="_blank" href='+url+'>'+url+'</a>')
-            if(data.media_type == 'image'){
-              $('#tips').text('IMAGE LOADING..')
-              $('#imgContainer').html('')
-              var img = document.createElement('img')
-              $(img).addClass('img-responsive').appendTo('#imgContainer')
-              img.onload = function(){
-                $('#tips').text('')
-              }
-              img.src = data.url
-            }
+            success(res)
           }else{
             $('#tips').text(res.code+'_'+res.msg)
           }
@@ -71,22 +75,7 @@ block content
     function lastsuccessCallback (res) {
           //- console.log(res)
           if(res.code && res.code == '0000'){
-            $('#tips').text('')
-            var data = res.data
-            //- console.log(data)
-            $('#h1').text(data.title)
-            $('#h2').text(data.date)
-            $('#p').text(data.explanation)
-            if(data.media_type == 'image'){
-              $('#tips').text('IMAGE IS LOADING..')
-              $('#imgContainer').html('')
-              var img = document.createElement('img')
-              $(img).addClass('img-responsive').appendTo('#imgContainer')
-              img.onload = function(){
-                $('#tips').text('')
-              }
-              img.src = data.url
-            }
+            success(res)
           }else if(res.code == '500'){
           last ++
           if(last>4) return false
