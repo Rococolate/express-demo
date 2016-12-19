@@ -2,7 +2,7 @@ extends layout
 
 block content
   .container
-    h1 choose Date
+    h1 Choose Date
     .form-inline
       .form-group
         input.form-control(type="text",name="time",value="")
@@ -15,33 +15,30 @@ block content
   script.
     'use strict'
     $(document).ready(function(){
-    
-    
       $('input[name="time"]').daterangepicker({
              singleDatePicker: true,
              showDropdowns: true,
              locale:{
               format: 'YYYY-MM-DD'
-
              }
          }, 
          function(start, end, label) {
             $('input[name="time"]').val(start.format('YYYY-MM-DD'))
          });
-    
     })
 
     function successCallback (res) {
-          console.log(res)
+          //- console.log(res)
           if(res.code && res.code == '0000'){
             $('#tips').text('')
             var data = res.data
-            console.log(data)
+            //- console.log(data)
+            document.title = data.title
             $('#h1').text(data.title)
             $('#h2').text(data.date)
             $('#p').text(data.explanation)
             if(data.media_type == 'image'){
-              $('#tips').text('IMAGE IS LOADING..')
+              $('#tips').text('IMAGE LOADING..')
               $('#imgContainer').html('')
               var img = document.createElement('img')
               $(img).addClass('img-responsive').appendTo('#imgContainer')
@@ -56,11 +53,9 @@ block content
         }
     
     $('#btn').click(function () {
-      
       if($('input[name="time"]').val() != ''){
         ajaxApod('/apod?date='+$('input[name="time"]').val(),successCallback)
       }
-      
     })
     
     var urlMsg = getURLInformation()
@@ -70,11 +65,11 @@ block content
     }
 
     function lastsuccessCallback (res) {
-          console.log(res)
+          //- console.log(res)
           if(res.code && res.code == '0000'){
             $('#tips').text('')
             var data = res.data
-            console.log(data)
+            //- console.log(data)
             $('#h1').text(data.title)
             $('#h2').text(data.date)
             $('#p').text(data.explanation)
@@ -98,7 +93,7 @@ block content
         }
 
     var last = 0
-    console.log(urlMsg.last)
+    //- console.log(urlMsg.last)
 
     if(!urlMsg.date && urlMsg.last){
       ajaxApod('apod/?last='+last,lastsuccessCallback)
@@ -109,7 +104,6 @@ block content
       if (window.location.href.split('#')[0].split('?')[1]) {
           var urlSearch = window.location.href.split('#')[0].split('?')[1].split('&');
       }
-
       if (urlSearch) {
           for (var i = 0; i < urlSearch.length; i++) {
               urlMsg[urlSearch[i].split('=')[0]] = urlSearch[i].split('=')[1] || "";
@@ -125,7 +119,7 @@ block content
         success:successCallback,
         error:function  (res) {
           $('#tips').text(res)
-          console.log(res)
+          //- console.log(res)
         }
       })
     }
